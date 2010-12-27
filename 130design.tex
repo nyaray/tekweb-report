@@ -1,9 +1,48 @@
 \section{Design}
-I detta avsnitt avhandlas systemet samt dess komponenters design.
+I detta avsnitt avhandlas ramverkets uppbyggnad samt modulerna och den roll de
+spelar.
 
-\subsection{Ramverket}
-Här skriver vi om ramverket, introducerar begreppet modul, m.m..
+\subsection{XML-konfigurationen}
+Ramverket konfigureras med en XML-fil.
+
+\subsection{XSLT-mallar}
+...används för att transformera data i mellan mellanrepresentationer och för att
+generera den text som till slut levereras till användarens webbläsare.
 
 \subsection{Moduler}
 Här skriver vi om modulerna, hur de förhåller sig till varandra, systemet samt
 lite om arv.
+
+Det blir konstigt att vi kan så mycket om moduler i ramverket om vi
+beskriver ramverket innan vi beskriver moduler.
+
+\subsection{Ramverket}
+Den centrala delen av ramverket, som sköter genereringen av innehållet, ligger
+i $htdocs/index.php$ och är i grunden uppbyggd av tre steg:
+
+\begin{itemize}
+  \item[\bf Förberedelsen]
+    I detta steg förbereds PHP-miljön för att kunna exekvera modulerna genom
+    att:
+    \begin{inparaenum}[\itshape a\upshape)]
+      \item länka in nödvändig funktionalitet som finns definierad i
+        andra filer,
+      \item ladda konfigurationen och
+      \item ladda huvudsidans mall,
+    \end{inparaenum}
+    för att kunna generera huvudsidan.
+
+    I vissa fall kan förfrågan som för tillfället besvaras vara endera en
+    AJAX-fråga eller en förfrågan om att få en viss undersida. I dessa fall
+    kommer det att göras en kontroll för att avgöra huruvida det är en giltig
+    förfrågan. Om frågan visar sig vara giltig så kommer den laddade
+    konfigurationen att anpassas därefter.
+  \item[\bf Huvud-loopen]
+    Huvud-loopen.
+
+  \item[\bf Utskriften]
+    I detta steg skrivs det genererade innehållet helt enkelt ut.
+\end{itemize}
+
+\subsection{Utbyggnader}
+Här skriver Magnus några rader om hur han haxX0rade in statistik-fixen.
