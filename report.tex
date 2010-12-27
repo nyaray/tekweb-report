@@ -1,9 +1,27 @@
-\documentclass[12pt,a4paper]{report}
-\usepackage[swedish]{babel}
-\usepackage[utf8]{inputenc}
+\documentclass[12pt,a4paper]{article}
 
-\title{Rapport för Tekweb-projektet}
-\author{Anders Steinrud    (\sc{dv}) \and
+% ta bort numreringen av sections m.m.
+%\setcounter{secnumdepth}{-1}
+% möjliggör klickbara länkar i innehållsförteckningen
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,
+  citecolor=blue,
+  filecolor=blue,
+  linkcolor=blue,
+  urlcolor=blue
+}
+
+% stöd för svenska
+\usepackage[swedish]{babel}
+% stöd för utf-8
+\usepackage[utf8]{inputenc}
+% stöd för include, verbatim-block m.m.
+\usepackage{verbatim}
+
+% kommandon för framsidan
+\title{Tekweb \\ \large{Ett mobilanpassat hemsideramverk}}
+\author{%Anders Steinrud    (\sc{dv}) \and
         Emilio Nyaray      (\sc{dv}) \and
         Filip Gottfridsson (\sc{f}) \and
         Magnus Söderling   (\sc{dv}) \and
@@ -20,20 +38,20 @@
 \newpage
 \include{02contents}
 \newpage
-\include{1introduction}
+\include{110introduction}
 \newpage
-\include{2requirements}
+\include{120requirements}
 \newpage
-\include{3design}
+\include{130design}
 \newpage
-\include{4implementation}
+\include{140implementation}
 \newpage
-\include{5evaluation}
+\include{150evaluation}
 \newpage
-\include{6conclusions}
+\include{160conclusions}
 \newpage
-\include{7references}
+\include{170references}
 \newpage
-\include{8appendices}
+\include{180appendices}
 
 \end{document}
