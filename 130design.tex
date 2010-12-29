@@ -74,13 +74,6 @@ moduler som ska finnas på sidan.
 ...används för att transformera data i mellan mellanrepresentationer och för att
 generera den text som till slut levereras till användarens webbläsare.
 
-\subsection{Moduler}
-Här skriver vi om modulerna, hur de förhåller sig till varandra, systemet samt
-lite om arv.
-
-Det blir konstigt att vi kan så mycket om moduler i ramverket om vi
-beskriver ramverket innan vi beskriver moduler.
-
 \subsection{Ramverket}
 \marginpar{\footnotesize Ska vi nämna inbyggda funktioner här?}
 
@@ -94,6 +87,7 @@ i $htdocs/index.php$ och är i grunden uppbyggd av tre steg:
     \begin{inparaenum}[\itshape a\upshape)]
       \item länka in nödvändig funktionalitet som finns definierad i
         andra filer,
+      \item eventuellt trimma den laddade konfigurationen,
       \item ladda konfigurationen och
       \item ladda huvudsidans mall,
     \end{inparaenum}
