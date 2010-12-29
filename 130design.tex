@@ -1,31 +1,69 @@
 \section{Design}
+\marginpar{\footnotesize Borde vi även nämna när det är (o)lämpligt att använda
+Tekweb?}
+
 I detta avsnitt avhandlas ramverkets moduler, konfiguration, mallar, ramverket
 självt samt ett litet tillägg om hur en mindre utbyggnad gjordes för att
 möjliggöra förandet av statistik över vilka sidor som besöks.
 
-\subsection{Moduler}
-Moduler spelar en central roll i ramverket 
+Den ursprungliga designen utformades primärt med PHP-klasserna i åtanke,
+men utvecklades under arbetets allteftersom PHP-klasserna bröts ned i bättre,
+mer logiska enheter.
 
-Här skriver vi om modulerna, hur de förhåller sig till varandra, systemet samt
-lite om arv. Det är viktigt att vi poängterar hur centrala moduler är men kanske
-ännu viktigare, varför de är så centrala som de är.
+\subsection{Moduler}
+\marginpar{\footnotesize Är detta svammel? :P}
+Moduler spelar en central roll i ramverket eftersom de är byggstenarna i en sida
+som byggs med Tekweb. En modul är i grunden en klass vars instans(er) har
+för syfte att sammanställa och göra information användbar för en besökare.
+Informationen kan läsas in på flera sätt, Tekweb erbjuder ett simpelt gränssnitt
+för att läsa ut information från andra hemsidor som en lång sträng och om
+behovet finns så kan man även implementera hjälpklasser för att göra mer
+avancerad datainsamling (med lämpliga ändringar av informationen), för att
+hålla modulklassens komplexitet på en rimlig nivå.
+
+Eftersom moduler ärver av den abstrakta klassen {\bf ContentModule} så kommer de
+även att innehålla de grundläggande funktioner som behövs. Det enda en
+modulklass ansvarar för är att vissa medlemsvariabler får lämpliga värden, den
+abstrakta klassen sköter överlämningen av informationen till den del av
+ramverket som instansierat modulen. Detta låter oss skriva enklare, men
+framförallt tydligare, kod som fortfarande går att överblicka när en modul är
+färdig.
+
+\subsubsection{Hjälpfiler}
+Utöver den PHP-fil som modulenklassen är implementerad i så används i vissa fall
+även en av följande hjälpfiler;
+
+\begin{itemize}
+  \item PHP-fil(er) med hjälpklasser.
+  \item JavaScript-fil(er) som innehåller funktionalitet som behövs hos
+    klienten.
+  \item XSL-mall(ar) som bestämmer hur modulens generererade XML-kod ska
+    transformeras till HTML.
+  \item CSS-fil(er) som används för att definiera hur den genererade HTML-koden
+    ska presenteras för användaren.
+\end{itemize}
 
 \subsection{XML-konfigurationen}
-Ramverket konfigureras med en XML-fil som har följande struktur:
+Ramverket konfigureras med en XML-fil som är uppbyggd enligt
+figur~\ref{fig:xml-config}.
 
+\begin{figure}[h]
 \begin{verbatim}
 root
 |_ title
-|_ item_0
+|_ item
    |_ ...
-|_ item_1
+|_ item
    |_ ...
 .
 .
 .
-|_ item_n
+|_ item
    |_ ...
 \end{verbatim}
+\caption{Illustration av konfigurationsfilen}
+\label{fig:xml-config}
+\end{figure}
 
 Rot-noden innehåller alltså en {\it title}-nod och ett godtyckligt antal
 {\it item}-noder. {\it title}-noden innehåller en sträng som senare används för
@@ -37,6 +75,8 @@ moduler som ska finnas på sidan.
 generera den text som till slut levereras till användarens webbläsare.
 
 \subsection{Ramverket}
+\marginpar{\footnotesize Ska vi nämna inbyggda funktioner här?}
+
 Den centrala delen av ramverket, som sköter genereringen av innehållet, ligger
 i $htdocs/index.php$ och är i grunden uppbyggd av tre steg:
 
