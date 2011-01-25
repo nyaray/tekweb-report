@@ -1,14 +1,16 @@
 \section{Design}
-\marginpar{\footnotesize Borde vi även nämna när det är (o)lämpligt att använda
-Tekweb?}
+I detta avsnitt avhandlas ramverket och dess beståndsdelar samt ett litet
+tillägg som gjordes för att möjliggöra förandet av statistik över vilka sidor
+som besöks.
 
-I detta avsnitt avhandlas ramverkets moduler, konfiguration, mallar, ramverket
-självt samt ett litet tillägg om hur en mindre utbyggnad gjordes för att
-möjliggöra förandet av statistik över vilka sidor som besöks.
-
-Den ursprungliga designen utformades primärt med PHP-klasserna i åtanke,
-men utvecklades under arbetets allteftersom PHP-klasserna bröts ned i bättre,
-mer logiska enheter.
+\subsubsection*{En löst specificerad design}
+\marginpar{Bättre rubrik efterfrågas...}
+I början av arbetet med projektet hade vi inte en klar bild av hur ramverkets
+arkitektur skulle se ut, men för att påskynda arbetet implementerades den
+arkitektur som beskrivs i resten av dokumentet. Det som först implementerades
+var en simpel version av det som beskrivs i resten av det här avsnittet. Under
+vårt arbete utökade vi ramverket med den funktionalitet vi kom att behöva och
+nådde till slut den färdiga produkten.
 
 \subsection{Moduler}
 \marginpar{\footnotesize Är detta svammel? :P}
@@ -21,17 +23,41 @@ behovet finns så kan man även implementera hjälpklasser för att göra mer
 avancerad datainsamling (med lämpliga ändringar av informationen), för att
 hålla modulklassens komplexitet på en rimlig nivå.
 
-Eftersom moduler ärver av den abstrakta klassen {\bf ContentModule} så kommer de
-även att innehålla de grundläggande funktioner som behövs. Det enda en
-modulklass ansvarar för är att vissa medlemsvariabler får lämpliga värden, den
-abstrakta klassen sköter överlämningen av informationen till den del av
-ramverket som instansierat modulen. Detta låter oss skriva enklare, men
-framförallt tydligare, kod som fortfarande går att överblicka när en modul är
-färdig.
+Då moduler måste ärva av den abstrakta klassen ContentModule\footnote{
+$<$Referens till källkods-filen som innehåller ContentModule?$>$} så kommer de
+i och med arvet att innehålla de grundläggande funktioner som behövs för att
+modulen ska kunna interagera med ramverket. Det enda en
+modulklass ansvarar för är att vissa medlemsvariabler tilldelas lämpliga
+värden, vilket låter oss skriva enklare kod som fortfarande går att överblicka
+när modulen är färdig.
 
-\subsubsection{Hjälpfiler}
+Modulernas innehåll renderas i slutändan på ett av de sätt (om det är
+implementerat i modulen) som finns i figur~\ref{list:modes}, beroende på vilket
+tillstånd modulen befinner sig i.
+
+\begin{figure}[h]
+\begin{itemize}
+  \item[{\bf Standardläget (default)}] används typiskt för att visa en
+    sammanställning av all information som finns tillgänglig för användaren.
+  \item[{\bf Växelläget (toggler)}] används när man vill ha ett klickbart objekt
+    på hemsidan som vecklar ut en ruta med det önskade innehållet när den
+    aktiveras.
+  \item[{\bf Frestelseläget (teaser)}] används då man vill visa en länk som ska
+    fresta användaren till att surfa vidare, t.ex. då man visar upp en rubrik
+    till en nyhet.
+\end{itemize}
+\caption{En lista av möjliga tillstånd för moduler\label{list:modes}}
+\end{figure}
+
+För att minimera trafikvolymen mellan telefonen och servern valde vi att
+implementera ett gränssnitt med hjälp av AJAX och i vissa fall en variant av
+AJAX som inte kretsar kring XML.\footnote{Vi borde kanske nämna AJAX någonstans
+så att det inte är ryckt ur luften} Detta är en av funktionerna vi såg ett behov
+av under arbetet med projektet. Mer om detta under rubrik~\ref{sec:ui}.
+
+\subsubsection*{Hjälpfiler}
 Utöver den PHP-fil som modulenklassen är implementerad i så används i vissa fall
-även en av följande hjälpfiler;
+även någon/några av följande hjälpfiler;
 
 \begin{itemize}
   \item PHP-fil(er) med hjälpklasser.
@@ -49,28 +75,31 @@ figur~\ref{fig:xml-config}.
 
 \begin{figure}[h]
 \begin{verbatim}
-root
-|_ title
-|_ item
-   |_ ...
-|_ item
-   |_ ...
-.
-.
-.
-|_ item
-   |_ ...
+                         root
+                 _________|_______...__
+                 |     |     |        |
+               title  item  item     item
+                       |     |        |
+                       .     .        .
+                       .     .        .
+                       .     .        .
 \end{verbatim}
 \caption{Illustration av konfigurationsfilen}
 \label{fig:xml-config}
 \end{figure}
 
-Rot-noden innehåller alltså en {\it title}-nod och ett godtyckligt antal
-{\it item}-noder. {\it title}-noden innehåller en sträng som senare används för
-att sätta sidans titel. {\it item}-noder används för att beskriva instanser av
-moduler som ska finnas på sidan.
+Rot-noden ({\it root}) innehåller alltså en titel-nod ({\it title}) och ett
+godtyckligt antal modul-noder ({\it item}). I {\it title} finns en sträng som
+senare används för att sätta sidans titel.
+
+{\it item} används för att beskriva attribut hos moduler som ska finnas på
+sidan, de måste åtminstone innehålla {\it module} och {\it mode}. De måste även
+innehålla {\it settings/name} om man vill att ramverket ska kunna utföra
+operationer som kräver att modulen kan pekas ut.
 
 \subsection{XSLT-mallar}
+
+
 ...används för att transformera data i mellan mellanrepresentationer och för att
 generera den text som till slut levereras till användarens webbläsare.
 
@@ -105,5 +134,10 @@ i $htdocs/index.php$ och är i grunden uppbyggd av tre steg:
     I detta steg skrivs det genererade innehållet helt enkelt ut.
 \end{itemize}
 
+\subsection{Användargränssnitt}
+\label{sec:ui}
+Här skriver vi mer om hur vi tänkte med UI:et och varför det är ssssmmmmexxayyy!
+
 \subsection{Utbyggnader}
+\label{design:stats}
 Här skriver Magnus några rader om hur han haxX0rade in statistik-fixen.
