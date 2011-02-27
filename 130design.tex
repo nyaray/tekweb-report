@@ -1,0 +1,191 @@
+\section{Design}
+I detta avsnitt avhandlas ramverket och dess beståndsdelar samt ett tillägg som
+gjordes för att möjliggöra förandet av statistik över vilka sidor som besöks.
+
+\subsubsection*{En löst specificerad design}
+I början av arbetet med projektet hade vi inte en klar bild av hur ramverkets
+arkitektur skulle se ut, men för att påskynda arbetet implementerades den
+arkitektur som beskrivs i resten av dokumentet. Under vårt arbete definierade
+vi, huvudsakligen genom konventioner, hur ramverket med dess flexibla
+grundfunktionalitet skulle användas.
+
+\subsection{Moduler}
+Moduler spelar en central roll i ramverket eftersom de är byggstenarna i en sida
+som byggs med Tekweb. En modul är i grunden en klass vars instans(er) har
+för syfte att sammanställa och göra information användbar för en besökare.
+Informationen kan läsas in på flera sätt, Tekweb erbjuder ett simpelt gränssnitt
+för att läsa ut information från andra hemsidor som en lång sträng och om
+behovet finns så kan man även implementera hjälpklasser för att göra mer
+avancerad data-insamling/-manipulering, för att hålla modulklassens komplexitet
+på en rimlig nivå.
+
+För att göra modulerna enklare att skriva måste de, enligt konvention,
+överskugga någon av metoderna för de olika visningslägena i den abstrakta
+klassen ContentModule\footnote{$<$Referens till källkods-filen som innehåller
+ContentModule?$>$}. Det ansvar en modul har, ur ett infrastrukturellt perspektiv
+är att se till att vissa lokala variabler i en klassinstans får lämpliga värden
+som av ramverket sedan utläses för att generera sidan det ska visas på. Eftersom
+basklassen och ramverket sköter transporten av den genererade informationen (XML
+för internt bruk) så kan det gå snabbt att skriva en modul, så länge den inte
+har en komplicerad uppgift, förstås.
+
+Modulernas innehåll renderas i slutändan på ett av de sätt (om det är
+implementerat i modulen) som finns i figur~\ref{list:modes}, beroende på vilket
+tillstånd modulen befinner sig i.
+
+\begin{figure}[h]
+\begin{itemize}
+  \item[{\bf Standardläget (default)}] används typiskt för att visa en
+    sammanställning av all information som finns tillgänglig för användaren.
+  \item[{\bf Växelläget (toggler)}] används när man vill ha ett klickbart objekt
+    på hemsidan som fäller ut en ruta med det önskade innehållet när den
+    aktiveras.
+  \item[{\bf Frestelseläget (teaser)}] används då man vill visa en länk som ska
+    fresta användaren till att surfa vidare, t.ex. då man visar upp en rubrik
+    till en nyhet.
+  \item[{\bf AJAX-läget (ajax)}] används för att skapa innehåll som ska
+    injiceras i en laddad sida i samverkan med växelläget.
+\end{itemize}
+\caption{En lista av möjliga tillstånd för moduler\label{list:modes}}
+\end{figure}
+
+Eftersom tiden för sidladdning och rendering fortfarande är runt 2-5 (om inte
+mer) sekunder på dagens smartphones så ville vi minimera antalet
+sidladdningar. För att åstadkomma detta införde vi växelläget, så som det
+beskrivs i figur~\ref{list:modes}.
+
+\subsubsection{Standardläget}
+Standardläget är det tillstånd en modul kommer att befinna sig i om inget annat
+anges i konfigurationsfilen. I detta tillstånd kommer modulen att generera sitt
+innehåll som renderas på det sättet standardlägets visningsmall definierar.
+
+\subsubsection{Växelläget}
+Växelläget fungerar i två steg;
+$1$) modulen genererar ett aktiveringsobjekt, d.v.s. något klickbart som
+användaren ser (möjligen en bild som ser ut som en app-ikon),
+$2$) om/när modulens aktiveringsobjekt aktiveras av användaren kommer innehållet
+att hämtas och injiceras i platsen där modulen renderats på sidan.
+
+Eftersom innehållet hämtas med javascript är det möjligt att användaren
+deaktiverat javascript eller har en undermålig javascriptimplementation som
+inte klarar av att göra ajax-förfrågningar. Om man behöver hantera alla
+besökare, oavsett om de har javascript eller ej, kan man göra så att
+datagenereringen i ajax-läget och standardläget sker på samma sätt. Det blir då
+möjligt att låta växelläget generera ett aktiveringsobjekt som är en länk till
+en sidvisning med den aktuella modulen i sitt standardläge. Om användaren kan
+hantera javascript så slipper den en tidsödslande sidladdning, om inte så tar
+det lite längre tid, men fungerar fortfarande. Termen för detta är \dq
+graceful degradation\dq.
+
+\subsubsection{Frestelseläget}
+Frestelseläget används för att locka användare till att klicka på länkar för att
+få se något innehåll, det kan t.ex. vara en rubrik från en nyhet, inledningen på
+ett twittermeddelande o.s.v.
+
+\subsubsection{Ajaxläget}
+Ajaxläget används, i ramverket, inte ensamt utan endast i samverkan med
+växelläget (se ovan).
+
+\subsubsection{Hjälpfiler}
+Utöver den PHP-fil som modulenklassen är implementerad i så används i vissa fall
+även någon/några av följande hjälpfiler;
+
+\begin{itemize}
+  \item PHP-fil(er) med hjälpklasser.
+  \item JavaScript-fil(er) som innehåller funktionalitet som behövs hos
+    klienten.
+  \item XSL-mall(ar) som bestämmer hur modulens generererade XML-kod ska
+    transformeras till HTML.
+  \item CSS-fil(er) som används för att definiera hur den genererade HTML-koden
+    ska presenteras för användaren.
+\end{itemize}
+
+\subsection{XML-konfigurationen}
+Ramverket konfigureras med en XML-fil som är uppbyggd enligt
+figur~\ref{fig:xml-config}.
+
+\begin{figure}[h]
+\begin{verbatim}
+                         root
+                 _________|_______...__
+                 |     |     |        |
+               title  item  item     item
+                       |     |        |
+                       .     .        .
+                       .     .        .
+                       .     .        .
+\end{verbatim}
+\caption{Illustration av konfigurationsfilen}
+\label{fig:xml-config}
+\end{figure}
+
+Rot-noden ({\it root}) innehåller alltså en titel-nod ({\it title}) och ett
+godtyckligt antal modul-noder ({\it item}). I {\it title} finns en sträng som
+senare används för att sätta sidans titel.
+
+{\it item} används för att beskriva de modul-instanser som ska finnas på sidan
+och hur de ska vara konfigurerade. Noden kapslar in {\it module}, {\it mode} och
+{\it settings} som anger vilken modul det är som ska instansieras, vilket
+visningsläge instansen kommer att köras i respektive inställningar som behövs
+för att modulen ska fungera och/eller kunna göra mer.
+
+\subsection{XSLT-mallar}
+Eftersom vi tidigt insåg att vi skulle behöva någon typ av mallsystem så valde
+vi att använda oss av XSLT-mallar. Valet motiverades med att verktygen som
+skulle behövas för att transformera mallarna redan fanns på plats i webb-hotellet
+och dessutom var standardiserade, två väldigt starka argument då man arbetar med
+webben. Ytterligare ett argument för att använda XSLT-mallar var att det
+var en intressant och relevant teknik som flera medlemmar i gruppen var
+intresserade av att lära sig.
+XSLT-mallar används alltså för att det innehåll som genereras av
+modulerna ska kunna presenteras på ett sätt som slutanvändarens webbläsare kan
+hantera.
+
+För att vi snabbt skulle kunna få ut innehåll från flera moduler bestämde vi att
+modulerna skulle generera XML på en viss form för att minska mallskrivandet
+överlag.
+
+XSLT-mallarna används ibland även internt, för att transformera aggregerad
+information. Schemamodulen använder sig av XSLT-transformationer för att
+transformera inläst kalenderdata från ett datorvänligt format till ett
+mobilvänligt format, mer om detta i modulens avsnitt.
+
+\subsection{Ramverket}
+\marginpar{\footnotesize Skriv något om inbyggda funktioner här?}
+
+Den centrala delen av ramverket, som sköter genereringen av innehållet, ligger
+i $htdocs/index.php$ och är i grunden uppbyggd av tre steg:
+
+\begin{itemize}
+  \item[\bf Förberedelsen]
+    I detta steg förbereds PHP-miljön för att kunna exekvera modulerna genom
+    att:
+    \begin{inparaenum}[\itshape a\upshape)]
+      \item länka in nödvändig funktionalitet som finns definierad i
+        andra filer,
+      \item eventuellt trimma den laddade konfigurationen,
+      \item ladda konfigurationen och
+      \item ladda huvudsidans mall,
+    \end{inparaenum}
+    för att kunna generera huvudsidan.
+
+    I vissa fall kan förfrågan som för tillfället besvaras vara endera en
+    AJAX-fråga eller en förfrågan om att få en viss undersida. I dessa fall
+    kommer det att göras en kontroll för att avgöra huruvida det är en giltig
+    förfrågan. Om frågan visar sig vara giltig så kommer den laddade
+    konfigurationen att anpassas därefter i steg $b$ ovan.
+
+  \item[\bf Huvud-loopen]
+    Huvud-loopen.
+
+  \item[\bf Utskriften]
+    I detta steg skrivs det genererade innehållet helt enkelt ut.
+\end{itemize}
+
+\subsection{Användargränssnitt}
+\label{sec:ui}
+Här skriver vi mer om hur vi tänkte med UI:et och varför det är ssssmmmmexxayyy!
+
+\subsection{Utbyggnader}
+\label{design:stats}
+Här skriver Magnus några rader om hur han haxX0rade in statistik-fixen.
