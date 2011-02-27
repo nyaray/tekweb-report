@@ -1,0 +1,121 @@
+\documentclass[12pt,a4paper]{report}
+
+% ta bort numreringen av sections m.m.
+%\setcounter{secnumdepth}{-1}
+% möjliggör klickbara länkar i innehållsförteckningen
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,
+  citecolor=blue,
+  filecolor=blue,
+  linkcolor=blue,
+  urlcolor=blue
+}
+
+% stöd för svenska
+\usepackage[swedish]{babel}
+% stöd för utf-8
+\usepackage[utf8]{inputenc}
+% stöd för input, verbatim-block m.m.
+\usepackage{verbatim}
+% stöd för bilder
+\usepackage{graphicx}
+
+% kommandon för framsidan
+\title{Tekweb \\ \large{Ett mobilanpassat ramverk för hemsidor}}
+\author{Emilio Nyaray      \and
+        Filip Gottfridsson \and
+        Magnus Söderling   \and
+        Markus Säfström
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% begin abstract
+\begin{abstract}
+Kortfattad sammanfattning av rapporten.
+\end{abstract}
+% end abstract
+
+\tableofcontents
+\newpage
+
+% begin chapter
+\chapter{Introduktion}
+\section{Bakgrund}
+Filips text om projektet.
+
+\section{Mål}
+Det vi kom fram till att tekweb skulle klara av under de första mötena.
+
+\section{Begränsningar av projektet}
+Här skriver vi vad vi lät bli att göra under arbetet med projektet.
+% end chapter
+
+% begin chapter
+\chapter{Förarbete}
+\section{Brainstorming}
+I början av arbetet med projektet så brainstormade projektgruppen för
+att få igång det kreativa tänkandet och harmonisera medlemmarnas mål och
+visioner kring arbetet med projektet.
+
+\input{brainstorming}
+
+% till mad, om du vill bryta upp det här i två delar så är det bara att
+% köra, mönstret för hur man gör det borde gå att utläsa i dokumentet :)
+\section{Pappersprototyper och användarintervjuer}
+Grejerna mad gjorde när han pappersprototypade och pratade med folk i
+foobar.
+
+\input{prototyping_interviews}
+
+% end chapter
+
+% begin chapter
+\chapter{Arkitektur}
+I detta avsnitt avhandlas ramverket och dess beståndsdelar samt ett
+tillägg som gjordes för att möjliggöra förandet av statistik över vilka
+sidor som besöks och i viss mån även vilka funktioner som används.
+
+\input{design}
+% end chapter
+
+% begin chapter
+\chapter{Implementation}
+I detta kapitel beskrivs implementationen av den arkitektur som beskrevs
+i det föregående kapitlet.
+
+\input{framework}
+
+\input{modules}
+
+% end chapter
+
+% begin chapter
+\chapter{Utvärdering}
+Hur gick det att genomföra projektet? Var det något särskilt som gick
+bra/dåligt?
+
+\input{evaluation}
+
+% end chapter
+
+% begin chapter
+\chapter{Slutsatser}
+Vi lyckades bygga en funktionell prototyp som tillgängliggjorde den
+funktionalitet och information som på förhand bestämts med beställaren.
+
+\input{conclusions}
+
+% end chapter
+
+% begin chapter
+\chapter{Fortsatt arbete}
+Skriva om vissa saker, bygga ut andra, rätta till knasigheter.
+
+% bilagor...
+
+\end{document}
+
