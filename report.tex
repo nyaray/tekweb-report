@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[11pt,a4paper]{report}
 
 % ta bort numreringen av sections m.m.
 %\setcounter{secnumdepth}{-1}
@@ -18,8 +18,16 @@
 \usepackage[utf8]{inputenc}
 % stöd för input, verbatim-block m.m.
 \usepackage{verbatim}
-% stöd för bilder
+% stöd för bilder och att de "flyter" i texten
 \usepackage{graphicx}
+\usepackage{wrapfig}
+
+% fixa så att kapitel alltid börjar på jämna sidor (höger sida)
+\makeatletter
+\renewcommand*\cleardoublepage{\clearpage\if@twoside
+  \ifodd\c@page \hbox{}\newpage\if@twocolumn\hbox{}%
+  \newpage\fi\fi\fi}
+\makeatother
 
 % kommandon för framsidan
 \title{Tekweb \\ \large{Ett mobilanpassat ramverk för hemsidor}}
