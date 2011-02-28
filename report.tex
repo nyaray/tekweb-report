@@ -22,13 +22,6 @@
 \usepackage{graphicx}
 \usepackage{wrapfig}
 
-% fixa så att kapitel alltid börjar på jämna sidor (höger sida)
-\makeatletter
-\renewcommand*\cleardoublepage{\clearpage\if@twoside
-  \ifodd\c@page \hbox{}\newpage\if@twocolumn\hbox{}%
-  \newpage\fi\fi\fi}
-\makeatother
-
 % kommandon för framsidan
 \title{Tekweb \\ \large{Ett mobilanpassat ramverk för hemsidor}}
 \author{Emilio Nyaray      \and
