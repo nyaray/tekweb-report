@@ -1,8 +1,53 @@
 \section{Ramverket}
-Ramverket implementerades med PHP. Vi använde oss av några häftiga
-bibliotek och funktioner tills vi upptäckte att webb-hotellet hade
-deaktiverat vissa saker och körde med konstiga inställningar.
+Ramverket är skrivet i PHP och förlitar sig på följande
+moduler/bibliotek;
 
-Det borde säkert stå mer om ramverkets implementation här, vi borde nog
-lägga till text.
+\begin{itemize}
+  \item[{\bf Output Buffering}] Utskrifter som vanligen hade gått till
+    klientens webbläsare går istället till en buffert för mellanlagring.
 
+  \item[{\bf Session}] Används för att lagra sessionsspecifik data.
+
+  \item[{\bf DOM}] För att arbeta med konfigurationsfilen och intern data.
+
+  \item[{\bf XSL}] För att transformera data som läses ut från andra tjänster
+    på internet och i universitetets nät.
+\end{itemize}
+
+\subsection{Filträd}
+Tekwebs filer lagras enligt följande struktur;
+
+\begin{verbatim}
+ /
+|- conf/
+| |- config.php
+| |- root.xml
+| |- root.xsl
+|- css/
+| |- layout.css
+| |- module/
+| | |- <modulspecifika css-filer>
+| |- reset.css
+| |- style.css
+|- gfx/
+| |- <instansspecifika bilder>
+| |- icons/
+| | |- <modulikoner>
+| |- module/
+|   |- <modulkataloger>
+|- htdocs/
+| |- index.php
+|- include/
+| |- <modulers hjälpbibliotek>
+| |- contentmodule.php
+| |- core.php
+|- index.php
+|- js/
+| |- <modulers javascript-filer> 
+| |- main.js
+|- module/
+| |- <modulkataloger>
+|   |- <modul>.php
+|   |- [<xsl-mall>.xsl]
+|- tekweb.tmproj
+\end{verbatim}
